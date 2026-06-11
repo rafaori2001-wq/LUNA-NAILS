@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lune Nails · Cádiz — Reserva tu cita online</title>
+  <meta name="description" content="Reserva el servicio que quieras y recibe la confirmación en tu WhatsApp al instante. Sin llamadas, sin esperas.">
+  <meta name="theme-color" content="#FAFAF8">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='6' fill='%23B8956A'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --blanco: #FAFAF8;
+      --negro-suave: #1A1A1A;
+      --arena: #E8E0D5;
+      --acento: #B8956A;
+      --gris-texto: #6B6B6B;
+      --gris-claro: #A6A6A6; /* solo footer oscuro: --gris-texto no llega a AA sobre #1A1A1A */
+      --fuente-display: "Cormorant Garamond", Georgia, serif;
+      --fuente-ui: "DM Sans", system-ui, -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-padding-top: 4.5rem; overflow-x: clip; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+
+    body {
+      font-family: var(--fuente-ui);
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--negro-suave);
+      background: var(--blanco);
+      overflow-x: clip;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .contenedor {
+      width: min(100% - 2.5rem, 1080px);
+      margin-inline: auto;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--negro-suave);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    .saltar {
+      position: absolute;
+      left: -999px;
+      top: 0.5rem;
+      z-index: 100;
+      background: var(--negro-suave);
+      color: var(--blanco);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+    .saltar:focus { left: 0.5rem; }
+
+    /* ——— Punto lunar (elemento firma) ——— */
+    .punto {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--acento);
+      flex: none;
+    }
+    .punto-seccion {
+      display: block;
+      margin: 0 auto 1.25rem;
+    }
+
+    /* ——— Botones ——— */
+    .btn {
+      display: inline-block;
+      padding: 0.85rem 1.9rem;
+      border-radius: 999px;
+      font-family: var(--fuente-ui);
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.4;
+      text-decoration: none;
+      text-align: center;
+      transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+    }
+    .btn-primario {
+      background: var(--acento);
+      color: var(--negro-suave);
+    }
+    .btn-primario:hover { background: #a8855b; }
+    .btn-secundario {
+      border: 1.5px solid var(--negro-suave);
+      color: var(--negro-suave);
+      background: transparent;
+    }
+    .btn-secundario:hover {
+      background: var(--negro-suave);
+      color: var(--blanco);
+    }
+    .btn-mini { padding: 0.5rem 1.25rem; font-size: 0.95rem; }
+
+    /* ——— Header ——— */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--blanco);
+      transition: box-shadow 150ms ease;
+    }
+    .header.con-sombra { box-shadow: 0 1px 14px rgba(26, 26, 26, 0.09); }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-block: 0.7rem;
+    }
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: var(--negro-suave);
+    }
+    .logo .punto { align-self: center; }
+    .logo-display {
+      font-family: var(--fuente-display);
+      font-weight: 600;
+      font-size: 1.45rem;
+      letter-spacing: 0.12em;
+      line-height: 1;
+    }
+    .logo-sub {
+      font-size: 0.82rem;
+      color: var(--gris-texto);
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    /* ——— Hero ——— */
+    .hero { padding-block: 2.75rem 4rem; text-align: center; }
+    .hero h1 {
+      font-family: var(--fuente-display);
+      font-weight: 600;
+      font-size: clamp(2.4rem, 9vw, 4.2rem);
+      line-height: 1.08;
+      letter-spacing: 0.01em;
+      max-width: 18ch;
+      margin-inline: auto;
+    }
+    .hero-sub {
+      max-width: 42ch;
+      margin: 1.1rem auto 1.75rem;
+      color: var(--gris-texto);
+    }
+    .hero-acciones {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .hero-acciones .btn { width: min(100%, 320px); }
+    .badges {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.55rem;
+      margin-top: 2.25rem;
+    }
+    .badges li {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.88rem;
+      color: var(--gris-texto);
+    }
+    .badges svg { color: var(--negro-suave); flex: none; }
+
+    /* ——— Secciones ——— */
+    .seccion { padding-block: clamp(3.5rem, 9vw, 5.5rem); }
+    .seccion-arena { background: var(--arena); }
+    .seccion h2 {
+      font-family: var(--fuente-display);
+      font-weight: 500;
+      font-size: clamp(1.9rem, 6.5vw, 2.8rem);
+      line-height: 1.15;
+      letter-spacing: 0.02em;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .seccion-sub {
+      text-align: center;
+      margin: -1.25rem auto 2rem;
+      max-width: 40ch;
+    }
+
+    /* ——— Servicios ——— */
+    .tarjetas {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.9rem;
+    }
+    .tarjeta {
+      background: var(--blanco);
+      border-radius: 12px;
+      padding: 1.3rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      transition: box-shadow 150ms ease;
+    }
+    .tarjeta:hover { box-shadow: 0 4px 18px rgba(26, 26, 26, 0.08); }
+    .tarjeta h3 {
+      font-size: 1.05rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .tarjeta-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      color: var(--gris-texto);
+      font-size: 0.92rem;
+    }
+    .tarjeta-meta .precio { font-weight: 500; font-size: 1.05rem; }
+    .tarjeta-enlace {
+      margin-top: 0.4rem;
+      align-self: flex-start;
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--negro-suave);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: color 150ms ease;
+    }
+    .tarjeta-enlace:hover { color: var(--acento); }
+
+    /* ——— Cómo funciona ——— */
+    .pasos {
+      list-style: none;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2.25rem;
+      max-width: 420px;
+      margin-inline: auto;
+    }
+    .paso-num {
+      display: block;
+      font-family: var(--fuente-display);
+      font-weight: 600;
+      font-size: 2.1rem;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .pasos h3 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+    .pasos p { color: var(--gris-texto); }
+    .pasos p.burbuja {
+      background: var(--arena);
+      color: var(--negro-suave);
+      border-radius: 16px 16px 16px 4px;
+      padding: 0.85rem 1.1rem;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      max-width: 330px;
+      margin-top: 1rem;
+    }
+
+    /* ——— Reserva ——— */
+    .contenedor-estrecho { max-width: 640px; }
+    .form-card {
+      background: var(--blanco);
+      border-radius: 16px;
+      padding: 0.75rem;
+    }
+    .form-card iframe {
+      display: block;
+      width: 100%;
+      border: 0;
+    }
+
+    /* ——— Ubicación ——— */
+    .ubicacion-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2.5rem;
+      max-width: 420px;
+      margin-inline: auto;
+    }
+    .direccion { font-size: 1.1rem; font-weight: 500; margin-bottom: 1.1rem; }
+    .ubicacion-ig { margin-top: 1.25rem; }
+    .ubicacion-ig a {
+      color: var(--negro-suave);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: color 150ms ease;
+    }
+    .ubicacion-ig a:hover { color: var(--acento); }
+    .horario { border-collapse: collapse; width: 100%; }
+    .horario th, .horario td {
+      text-align: left;
+      padding-block: 0.45rem;
+      vertical-align: top;
+    }
+    .horario th { font-weight: 500; padding-right: 1.25rem; white-space: nowrap; }
+    .horario td { color: var(--gris-texto); }
+
+    /* ——— Footer ——— */
+    .footer {
+      background: var(--negro-suave);
+      color: var(--blanco);
+      text-align: center;
+      padding-block: 3.25rem;
+    }
+    .footer-logo {
+      font-family: var(--fuente-display);
+      font-weight: 500;
+      font-size: 1.5rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.25rem;
+    }
+    .footer-nota {
+      margin-top: 1.75rem;
+      font-size: 0.85rem;
+      color: var(--gris-claro);
+      max-width: 48ch;
+      margin-inline: auto;
+    }
+    .footer :focus-visible { outline-color: var(--blanco); }
+
+    /* ——— Desktop (adaptación) ——— */
+    @media (min-width: 480px) {
+      .tarjetas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (min-width: 600px) {
+      .hero { padding-block: 4.5rem 5.5rem; }
+      .hero-acciones { flex-direction: row; justify-content: center; }
+      .hero-acciones .btn { width: auto; }
+      .badges { flex-direction: row; justify-content: center; gap: 1.75rem; flex-wrap: wrap; }
+    }
+    @media (min-width: 820px) {
+      .pasos {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: none;
+        gap: 2.5rem;
+      }
+      .ubicacion-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: 760px;
+        align-items: start;
+      }
+      .horario { width: auto; }
+    }
+    @media (min-width: 900px) {
+      .tarjetas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <header class="header">
+    <div class="contenedor header-inner">
+      <a class="logo" href="#contenido" aria-label="Lune Nails Cádiz — inicio">
+        <span class="punto" aria-hidden="true"></span>
+        <span class="logo-display">LUNE</span>
+        <span class="logo-sub">· nails cádiz</span>
+      </a>
+      <a class="btn btn-primario btn-mini" href="#reservar">Reservar</a>
+    </div>
+  </header>
+
+  <main id="contenido">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="contenedor">
+        <h1>Uñas que duran. Cita en un minuto.</h1>
+        <p class="hero-sub">Reserva el servicio que quieras y recibe la confirmación en tu WhatsApp al instante. Sin llamadas, sin esperas.</p>
+        <div class="hero-acciones">
+          <a class="btn btn-primario" href="#reservar">Reservar cita</a>
+          <a class="btn btn-secundario" href="#servicios">Ver servicios</a>
+        </div>
+        <ul class="badges">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            Confirmación por WhatsApp
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            Recordatorio el día antes
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            Sin necesidad de llamar
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Servicios -->
+    <section class="seccion seccion-arena" id="servicios">
+      <div class="contenedor">
+        <span class="punto punto-seccion" aria-hidden="true"></span>
+        <h2>Servicios</h2>
+        <div class="tarjetas">
+          <article class="tarjeta">
+            <h3>Manicura gel</h3>
+            <p class="tarjeta-meta"><span>60 min</span><span class="precio">28 €</span></p>
+            <a class="tarjeta-enlace" href="#reservar">Reservar</a>
+          </article>
+          <article class="tarjeta">
+            <h3>Pedicura gel</h3>
+            <p class="tarjeta-meta"><span>75 min</span><span class="precio">32 €</span></p>
+            <a class="tarjeta-enlace" href="#reservar">Reservar</a>
+          </article>
+          <article class="tarjeta">
+            <h3>Uñas acrílicas</h3>
+            <p class="tarjeta-meta"><span>90 min</span><span class="precio">45 €</span></p>
+            <a class="tarjeta-enlace" href="#reservar">Reservar</a>
+          </article>
+          <article class="tarjeta">
+            <h3>Nail art (diseño)</h3>
+            <p class="tarjeta-meta"><span>30 min</span><span class="precio">15 €</span></p>
+            <a class="tarjeta-enlace" href="#reservar">Reservar</a>
+          </article>
+          <article class="tarjeta">
+            <h3>Retirada de gel</h3>
+            <p class="tarjeta-meta"><span>30 min</span><span class="precio">12 €</span></p>
+            <a class="tarjeta-enlace" href="#reservar">Reservar</a>
+          </article>
+          <article class="tarjeta">
+            <h3>Manicura express</h3>
+            <p class="tarjeta-meta"><span>30 min</span><span class="precio">14 €</span></p>
+            <a class="tarjeta-enlace" href="#reservar">Reservar</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cómo funciona -->
+    <section class="seccion">
+      <div class="contenedor">
+        <span class="punto punto-seccion" aria-hidden="true"></span>
+        <h2>Reservar es muy sencillo</h2>
+        <ol class="pasos">
+          <li>
+            <span class="paso-num" aria-hidden="true">1</span>
+            <h3>Elige tu servicio</h3>
+            <p>Selecciona el servicio, el día y la hora que mejor te vienen.</p>
+          </li>
+          <li>
+            <span class="paso-num" aria-hidden="true">2</span>
+            <h3>WhatsApp al instante</h3>
+            <p>En menos de un minuto recibes la confirmación directamente en tu WhatsApp.</p>
+            <p class="burbuja">✓✓ Hola Lucía, tu cita en Lune Nails está confirmada para el viernes 14 a las 17:00. ¡Te esperamos 🤍</p>
+          </li>
+          <li>
+            <span class="paso-num" aria-hidden="true">3</span>
+            <h3>Te avisamos el día antes</h3>
+            <p>Te enviamos un recordatorio automático 24 h antes de tu cita para que no se te pase.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Reserva -->
+    <section class="seccion seccion-arena" id="reservar">
+      <div class="contenedor contenedor-estrecho">
+        <span class="punto punto-seccion" aria-hidden="true"></span>
+        <h2>Reserva tu cita</h2>
+        <p class="seccion-sub">Recibirás la confirmación en tu WhatsApp en menos de un minuto.</p>
+        <div class="form-card">
+          <!-- src directo = el formulario carga también sin JS; embed.js usa data-tally-src para altura dinámica -->
+          <iframe src="https://tally.so/embed/XXXXXX?hideTitle=1&transparentBackground=1"
+                  data-tally-src="https://tally.so/embed/XXXXXX?hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                  loading="lazy" width="100%" height="500" frameborder="0"
+                  title="Reserva tu cita en Lune Nails"></iframe>
+        </div>
+      </div>
+    </section>
+    <script src="https://tally.so/widgets/embed.js" async></script>
+
+    <!-- Ubicación y horario -->
+    <section class="seccion">
+      <div class="contenedor">
+        <span class="punto punto-seccion" aria-hidden="true"></span>
+        <h2>Ubicación y horario</h2>
+        <div class="ubicacion-grid">
+          <div>
+            <p class="direccion">Calle Ancha, 24 · 11001 Cádiz</p>
+            <a class="btn btn-secundario" href="https://maps.google.com/?q=Calle+Ancha+24+Cádiz" target="_blank" rel="noopener">Cómo llegar</a>
+            <p class="ubicacion-ig"><a href="https://instagram.com" target="_blank" rel="noopener">@lunenails.cadiz</a></p>
+          </div>
+          <table class="horario">
+            <tbody>
+              <tr><th scope="row">Lunes a viernes</th><td>10:00 – 14:00 / 16:30 – 20:00</td></tr>
+              <tr><th scope="row">Sábado</th><td>10:00 – 15:00</td></tr>
+              <tr><th scope="row">Domingo</th><td>Cerrado</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="contenedor">
+      <p class="footer-logo">Lune Nails · Cádiz</p>
+      <a class="btn btn-primario" href="#reservar">Reservar cita</a>
+      <p class="footer-nota">Página de demostración — sistema de reservas con confirmación automática por WhatsApp.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var header = document.querySelector('.header');
+      function alScroll() {
+        header.classList.toggle('con-sombra', window.scrollY > 8);
+      }
+      window.addEventListener('scroll', alScroll, { passive: true });
+      alScroll();
+    })();
+  </script>
+</body>
+</html>
